@@ -1,0 +1,82 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx} 
+\usepackage[sfdefault]{carlito}
+\usepackage[showframe,margin=0cm]{geometry}
+\usepackage{tikz}
+\usepackage{svg}
+\usepackage{adjustbox}
+\usepackage{readarray}
+\usepackage{xcolor}
+\usepackage{xstring}
+\usepackage{varwidth}
+\definecolor{darkblue}{RGB}{14,40,65}
+
+\begin{document}
+\readarraysepchar{;}
+\readarrayendlinechar=10
+\readdef{data.csv}\mydata
+\readarray*\mydata\myarray[-,\ncols]
+
+\def\special_value{y}
+
+\foreach \i [evaluate={
+\mymoditen=int(mod(\i,10));
+\col=mod(\i+1,2);
+\row=int((\i-1)/2);
+\shift=int((\i-1)/10);
+\x=1.7+(\col)*9.5;
+\y=-1.3-(\row-5*\shift)*5.5;}
+] in {1,...,\nrows}{
+
+% Start definition of the model
+\begin{tikzpicture}[shift=(current page.north west),remember picture, overlay]
+\tikzset{nodetemplate/.pic={
+% Upper banner
+\node[fill=darkblue, text=white, anchor=north west, minimum width=8.4cm, minimum height=1.4cm, font=\bfseries\fontsize{16}{22}\selectfont] at (-0.2, 0.4) {};
+
+% Title
+\node[text=white, anchor=north west, minimum width=8cm, minimum height=1.4cm, font=\bfseries\fontsize{17}{22}\selectfont,yshift=-0.05cm] at (0, 0.2) {{Belgian Supercomputing Day}};
+
+% First/Last Name
+\node[text=\fontcolor, anchor=north west, minimum width=8cm, minimum height=0.8cm, font=\bfseries\fontsize{17}{22}\selectfont,yshift=-0.05cm] at (0, -1.4) {\myarray[\i,1] \MakeUppercase{\myarray[\i,2]}};
+
+% Affiliation
+\node[text=black, anchor=north west, minimum width=7.2cm, minimum height=0.8cm, font=\bfseries\fontsize{11}{22}\linespread{0}\selectfont,yshift=-0.05cm] at (0.4, -2.1) {\begin{varwidth}{7.2cm}\centering\myarray[\i,4]\end{varwidth}};
+
+% Date
+\node[text=black, anchor=north west, minimum width=8cm, minimum height=0.8cm, font=\bfseries\fontsize{10}{22}\selectfont,yshift=-0.05cm] at (0, -2.8) {{November 13\textsuperscript{th}, 2026}};
+
+% Lower banner
+\node[fill=darkblue, text=white, anchor=north west, minimum width=8.4cm, minimum height=1.5cm, font=\bfseries\fontsize{16}{22}\selectfont] at (-0.2, -3.7) {};
+
+% Institutional logos
+\node[anchor=north west, text width=8cm, minimum height=1.3cm] at (0, -3.7) {
+    \hspace*{\fill}
+    \adjustbox{valign=c}{\includegraphics[height=0.6cm, keepaspectratio]{ceci.png}}
+    \hspace*{\fill}
+    \adjustbox{valign=c}{\includesvg[height=0.9cm]{EuroCC_BE.svg}}
+    \hspace*{\fill}
+    \adjustbox{valign=c}{\includesvg[height=0.6cm]{LUMI_light.svg}}
+    \hspace*{\fill}
+    \adjustbox{valign=c}{\includegraphics[height=0.85cm]{VSC.png}}
+    \hspace*{\fill}
+};
+
+% Uncomment the following line to check where the limits of the stickers (Avery, 80x50mm)
+\node[draw=red, thick, anchor=north west, minimum width=8cm, minimum height=5cm] at (0, 0.1) {};
+
+% Uncomment the next two lines to enable guides. Feel free to change the "-5.4" and "-5.98" values to match the logos you want on the sticker
+%\node[draw=gray, thick,inner sep=0pt, anchor=north west, minimum width=8.8cm, minimum height=0cm] at (1.3,-5.4) {};
+%\node[draw=gray, thick,inner sep=0pt, anchor=north west, minimum width=8.8cm, minimum height=0cm] at (1.3,-5.98) {};
+}}
+
+\ifthenelse{\equal{y}{\myarray[\i,3]}}{\def\fontcolor{orange}}{\def\fontcolor{black}}
+
+\path (\x,\y) pic {nodetemplate};
+% \textcolor{\fontcolor}{\myarray[\i,1] \MakeUppercase{\myarray[\i,2]}}
+\end{tikzpicture}
+\ifnum\mymoditen=0
+    \newpage
+\fi
+}
+\end{document}
